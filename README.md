@@ -7,5 +7,10 @@ Calculate the X-Y translational displacement from a reference frame to a target 
 - target_tf: the target TF
 - gps_tf: GPS link id
 
+## Usage
+
+```
+ros2 launch fake_gps fake_gps.launch.py 
+```
 
 
