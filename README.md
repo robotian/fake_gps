@@ -16,4 +16,9 @@ Calculate the X-Y translational displacement from a reference frame to a target 
 ros2 launch fake_gps fake_gps.launch.py 
 ```
 
+## To Do
+- Noise Parameter
+- Covariance matrix 
+
+
 
