@@ -1,6 +1,9 @@
 # fake_gps
 Calculate the X-Y translational displacement from a reference frame to a target frame, convert it to Longitude and Latitude values, and publish it as NavSatFix message topic. 
 
+Coordinate System: WGS84
+UTM Zone: 16 North
+
 - Longitude: X axis displacement
 - Latitude: Y axis displacement
 
