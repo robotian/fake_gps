@@ -1,6 +1,9 @@
 # fake_gps
 Calculate the X-Y translational displacement from a reference frame to a target frame, convert it to Longitude and Latitude values, and publish it as NavSatFix message topic. 
 
+- Longitude: X axis displacement
+- Latitude: Y axis displacement
+
 
 ## Parameters
 - base_tf: the reference TF 
