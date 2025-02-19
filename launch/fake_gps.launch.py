@@ -10,16 +10,17 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,            
             parameters=[
+                {'use_sim_time':False},
                 {'base_tf':'map'},
                 {'target_tf':'base_link_gt'},
-                {'gps_tf':'jackal_gnss_link'},
-                {'my_parameter': 'initial_value'},
-                {'another_parameter': 42}
+                {'gps_tf':'jackal_gnss_link'},      
+
             ],
             namespace = 'jackal',
             remappings={
                 ('/tf','tf'),
-                ('/tf_static','tf_static')
+                ('/tf_static','tf_static'),
+                ('/fix','navfix')
             }
         )
     ])

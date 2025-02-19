@@ -37,22 +37,23 @@ RAD_TO_DEG = 180 / math.pi
 class TfToGpsPublisher(Node):
     def __init__(self):
         super().__init__('tf_to_gps_publisher')
-        self.declare_parameter('base_tf','map')
+        
+        # self.set_parameters([rclpy.parameter.Parameter('use_sim_time', rclpy.Parameter.Type.BOOL, True)])
+
+        # self.declare_parameter('use_sim_time',False)
+        self.declare_parameter('base_tf','map')    # declare a parameter name with a default value. 
         self.declare_parameter('target_tf','base_link')
         self.declare_parameter('gps_tf','gnss_link')
+        
 
         self.base_frame = self.get_parameter('base_tf').get_parameter_value().string_value
         self.target_frame = self.get_parameter('target_tf').get_parameter_value().string_value
         self.gps_frame = self.get_parameter('gps_tf').get_parameter_value().string_value
+        # self.set_parameters(self.get_parameter('use_sim_time').get_parameter_value().bool_value)
 
+        # self.get_logger().info(f"use_sim_time {self.get_parameter('use_sim_time').get_parameter_value().string_value}")
 
-
-
-        # self.declare_parameter('my_parameter','test')  # declare a parameter name with a default value. 
         
-        # self.get_logger().info(self.get_parameter('my_parameter').get_parameter_value().string_value)
-
-        self.set_parameters([rclpy.parameter.Parameter('use_sim_time', rclpy.Parameter.Type.BOOL, True)])
 
         self.get_logger().info(f"{utm.datum}")
         
