@@ -14,7 +14,6 @@ def generate_launch_description():
                 {'base_tf':'map'},
                 {'target_tf':'base_link_gt'},
                 {'gps_tf':'jackal_gnss_link'},      
-
             ],
             namespace = 'jackal',
             remappings={

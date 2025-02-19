@@ -38,9 +38,6 @@ class TfToGpsPublisher(Node):
     def __init__(self):
         super().__init__('tf_to_gps_publisher')
         
-        # self.set_parameters([rclpy.parameter.Parameter('use_sim_time', rclpy.Parameter.Type.BOOL, True)])
-
-        # self.declare_parameter('use_sim_time',False)
         self.declare_parameter('base_tf','map')    # declare a parameter name with a default value. 
         self.declare_parameter('target_tf','base_link')
         self.declare_parameter('gps_tf','gnss_link')
@@ -49,17 +46,11 @@ class TfToGpsPublisher(Node):
         self.base_frame = self.get_parameter('base_tf').get_parameter_value().string_value
         self.target_frame = self.get_parameter('target_tf').get_parameter_value().string_value
         self.gps_frame = self.get_parameter('gps_tf').get_parameter_value().string_value
-        # self.set_parameters(self.get_parameter('use_sim_time').get_parameter_value().bool_value)
-
-        # self.get_logger().info(f"use_sim_time {self.get_parameter('use_sim_time').get_parameter_value().string_value}")
-
-        
 
         self.get_logger().info(f"{utm.datum}")
         
         self.start_x, self.start_y = transformer_wgs84_to_utm.transform(START_LON, START_LAT)
 ###################### change the sub topic as needed ##############################
-        # self.target_frame = self.target_frame.get_parameter_value().string_value  #self.declare_parameter('target_frame', 'map').get_parameter_value().string_value
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         # Call on_timer function every second
@@ -71,11 +62,6 @@ class TfToGpsPublisher(Node):
             '/fix', 
             10           
         )
-    # def meters_to_latlng(self, dx, dy):
-    #     """Convert displacement in meters to changes in latitude and longitude"""
-    #     dlat = dy / EARTH_RADIUS * RAD_TO_DEG
-    #     dlon = dx / (EARTH_RADIUS * math.cos(self.origin_lat * DEG_TO_RAD)) * RAD_TO_DEG
-    #     return dlat, dlon
     
     def on_timer(self):
         from_frame_rel = self.base_frame
@@ -102,7 +88,6 @@ class TfToGpsPublisher(Node):
                                            0.0, 0.1+random.uniform(-0.03,0.03), 0.0,
                                            0.0, 0.0, 0.1+random.uniform(-0.03,0.03)]
             gps_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_DIAGONAL_KNOWN
-            
             self.gps_publisher.publish(gps_msg)
 
 
