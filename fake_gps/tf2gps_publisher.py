@@ -34,9 +34,23 @@ EARTH_RADIUS = 6371000  # meters
 DEG_TO_RAD = math.pi / 180
 RAD_TO_DEG = 180 / math.pi
 
-class OdometryToGpsPublisher(Node):
+class TfToGpsPublisher(Node):
     def __init__(self):
         super().__init__('tf_to_gps_publisher')
+        self.declare_parameter('base_tf','map')
+        self.declare_parameter('target_tf','base_link')
+        self.declare_parameter('gps_tf','gnss_link')
+
+        self.base_frame = self.get_parameter('base_tf').get_parameter_value().string_value
+        self.target_frame = self.get_parameter('target_tf').get_parameter_value().string_value
+        self.gps_frame = self.get_parameter('gps_tf').get_parameter_value().string_value
+
+
+
+
+        # self.declare_parameter('my_parameter','test')  # declare a parameter name with a default value. 
+        
+        # self.get_logger().info(self.get_parameter('my_parameter').get_parameter_value().string_value)
 
         self.set_parameters([rclpy.parameter.Parameter('use_sim_time', rclpy.Parameter.Type.BOOL, True)])
 
@@ -44,20 +58,12 @@ class OdometryToGpsPublisher(Node):
         
         self.start_x, self.start_y = transformer_wgs84_to_utm.transform(START_LON, START_LAT)
 ###################### change the sub topic as needed ##############################
-        self.target_frame = self.declare_parameter('target_frame', 'map').get_parameter_value().string_value
+        # self.target_frame = self.target_frame.get_parameter_value().string_value  #self.declare_parameter('target_frame', 'map').get_parameter_value().string_value
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         # Call on_timer function every second
         self.timer = self.create_timer(1, self.on_timer)  
         
-
-
-        # self.subscription = self.create_subscription(
-        #     Odometry,
-        #     '/husky1/odom',
-        #     self.odom_callback,
-        #     10
-        # )
 #######################################################################
         self.gps_publisher = self.create_publisher(
             NavSatFix,
@@ -71,8 +77,8 @@ class OdometryToGpsPublisher(Node):
     #     return dlat, dlon
     
     def on_timer(self):
-        from_frame_rel = self.target_frame
-        to_frame_rel = 'base_link_gt'
+        from_frame_rel = self.base_frame
+        to_frame_rel = self.target_frame # 'base_link_gt'
 
         # Look up for the transformation between target_frame and turtle2 frames
         # and send velocity commands for turtle2 to reach target_frame
@@ -98,12 +104,6 @@ class OdometryToGpsPublisher(Node):
             
             self.gps_publisher.publish(gps_msg)
 
-    # def odom_callback(self, msg):
-    #     position = msg.pose.pose.position
-    #     gps_msg = self.convert_to_gps(position.x, position.y, position.z)
-    #     if gps_msg: 
-    #         gps_msg.header.stamp = self.get_clock().now().to_msg()
-    #         self.gps_publisher.publish(gps_msg)
 
     def convert_to_gps(self, x, y, z):
         utm_x = self.start_x + x
@@ -113,7 +113,7 @@ class OdometryToGpsPublisher(Node):
 
         gps_msg = NavSatFix()
         # gps_msg.header.frame_id = "map"
-        gps_msg.header.frame_id = "jackal_gnss_link"
+        gps_msg.header.frame_id = self.gps_frame  # "jackal_gnss_link"
         gps_msg.latitude = lat
         gps_msg.longitude = lon
         gps_msg.altitude = alt
@@ -124,7 +124,7 @@ class OdometryToGpsPublisher(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    node = OdometryToGpsPublisher()
+    node = TfToGpsPublisher()
 
     try:
         rclpy.spin(node)
