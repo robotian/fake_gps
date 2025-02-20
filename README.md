@@ -10,14 +10,25 @@ UTM Zone: 16 North
 
 
 ## Parameters
-- base_tf: the reference TF 
-- target_tf: the target TF
-- gps_tf: GPS link id
+- base_tf (default: 'map' ): the reference TF 
+- target_tf (default: 'base_link'): the target TF
+- gps_tf (default: 'gnss_link'): GPS link id
+
 
 ## Usage
 
 ```
 ros2 launch fake_gps fake_gps.launch.py 
+```
+Launch parameters for the node
+
+```
+parameters=[
+                {'use_sim_time':False},
+                {'base_tf':'map'},
+                {'target_tf':'base_link_gt'},
+                {'gps_tf':'jackal_gnss_link'},      
+            ]
 ```
 
 ## To Do

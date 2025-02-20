@@ -10,7 +10,7 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,            
             parameters=[
-                {'use_sim_time':False},
+                {'use_sim_time':True},
                 {'base_tf':'map'},
                 {'target_tf':'base_link_gt'},
                 {'gps_tf':'jackal_gnss_link'},      
