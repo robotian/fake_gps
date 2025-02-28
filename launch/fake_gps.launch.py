@@ -10,12 +10,12 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,            
             parameters=[
-                {'use_sim_time':True},
+                {'use_sim_time':True},  
                 {'base_tf':'map'},
-                {'target_tf':'base_link_gt'},
-                {'gps_tf':'jackal_gnss_link'},      
+                {'target_tf':'Ground_Truth'},
+                {'gps_tf':'husky1_gnss_link'},      
             ],
-            namespace = 'jackal',
+            namespace = 'husky1',
             remappings={
                 ('/tf','tf'),
                 ('/tf_static','tf_static'),
