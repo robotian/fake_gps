@@ -54,7 +54,7 @@ class TfToGpsPublisher(Node):
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         # Call on_timer function every second
-        self.timer = self.create_timer(1, self.on_timer)  
+        self.timer = self.create_timer(0.1, self.on_timer)  
         
 #######################################################################
         self.gps_publisher = self.create_publisher(
@@ -79,7 +79,7 @@ class TfToGpsPublisher(Node):
                 f'Could not transform {to_frame_rel} to {from_frame_rel}: {ex}')
             return
         
-        self.get_logger().info(f"Displacement in map frame: x={t.transform.translation.x}, y={t.transform.translation.y}, z={t.transform.translation.z}")
+        self.get_logger().debug(f"Displacement in map frame: x={t.transform.translation.x}, y={t.transform.translation.y}, z={t.transform.translation.z}")
         
         gps_msg = self.convert_to_gps(t.transform.translation.x+random.uniform(-0.03,0.03), t.transform.translation.y+random.uniform(-0.03,0.03), t.transform.translation.z)
         if gps_msg: 
