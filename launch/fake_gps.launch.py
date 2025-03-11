@@ -48,13 +48,13 @@ def generate_launch_description():
     #     default_value='gps_link'  #husky1_gnss_link
     # )
 
-    config_camera_path = os.path.join(
+    config_path = os.path.join(
         get_package_share_directory('fake_gps'),
         'config',
         'fake_gps_sim.yaml'
     )
 
-    node_parameters = [config_camera_path]
+    node_parameters = [config_path]
 
 
 
