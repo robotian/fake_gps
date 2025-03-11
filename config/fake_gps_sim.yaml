@@ -1,0 +1,7 @@
+---
+/*/tf2gps_publisher:
+  ros__parameters:
+    use_sim_time: True
+    base_tf: 'map'
+    target_tf: 'Ground_Truth'
+    gps_tf: 'husky1_gnss_link'
