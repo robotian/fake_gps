@@ -28,9 +28,7 @@ def generate_launch_description():
     use_sim_time_arg = DeclareLaunchArgument(
         'use_sim_time',
         default_value='False'
-    )
-
-    
+    )    
 
     base_tf_arg = DeclareLaunchArgument(
         'base_tf',
@@ -55,7 +53,7 @@ def generate_launch_description():
     #     'fake_gps_sim.yaml'
     # )
 
-    # node_parameters = [config_path]
+    # node_parameters = [config_path]   //
 
 
 

@@ -19,20 +19,11 @@ import random
 START_LAT = 45.081679
 START_LON = -84.774588
 
-
-
 wgs84 = pyproj.CRS("EPSG:4326")
 utm = pyproj.CRS("EPSG:32616")
-# utm = pyproj.CRS(proj='utm', zone=16, ellps='WGS84')
-
 
 transformer_utm_to_wgs84 = pyproj.Transformer.from_crs(utm, wgs84, always_xy=True)
 transformer_wgs84_to_utm = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True)
-
-
-EARTH_RADIUS = 6371000  # meters
-DEG_TO_RAD = math.pi / 180
-RAD_TO_DEG = 180 / math.pi
 
 class TfToGpsPublisher(Node):
     def __init__(self):
@@ -49,6 +40,8 @@ class TfToGpsPublisher(Node):
 
         self.get_logger().info(f"{utm.datum}")
         
+
+        # Get the UTM coordinates of the starting point
         self.start_x, self.start_y = transformer_wgs84_to_utm.transform(START_LON, START_LAT)
 ###################### change the sub topic as needed ##############################
         self.tf_buffer = Buffer()
@@ -64,8 +57,9 @@ class TfToGpsPublisher(Node):
         )
     
     def on_timer(self):
-        from_frame_rel = self.base_frame
-        to_frame_rel = self.target_frame # 'base_link_gt'
+        from_frame_rel = self.base_frame # 'base_tf'
+        to_frame_rel = self.target_frame # 'target_tf'
+
 
         # Look up for the transformation between target_frame and turtle2 frames
         # and send velocity commands for turtle2 to reach target_frame
@@ -81,7 +75,10 @@ class TfToGpsPublisher(Node):
         
         self.get_logger().debug(f"Displacement in map frame: x={t.transform.translation.x}, y={t.transform.translation.y}, z={t.transform.translation.z}")
         
-        gps_msg = self.convert_to_gps(t.transform.translation.x+random.uniform(-0.03,0.03), t.transform.translation.y+random.uniform(-0.03,0.03), t.transform.translation.z)
+        noise = 0.1
+
+        gps_msg = self.convert_to_gps(t.transform.translation.x+random.uniform(-noise,noise), t.transform.translation.y+random.uniform(-noise,noise), z=0.0)
+
         if gps_msg: 
             gps_msg.header.stamp = self.get_clock().now().to_msg()
             gps_msg.position_covariance = [0.1+random.uniform(-0.03,0.03), 0.0, 0.0,
@@ -94,8 +91,15 @@ class TfToGpsPublisher(Node):
     def convert_to_gps(self, x, y, z):
         utm_x = self.start_x + x
         utm_y = self.start_y + y
+        
+        # self.get_logger().info(f"Before UTM x={x}, y={y}")
+        
         lon, lat = transformer_utm_to_wgs84.transform(utm_x, utm_y)
         alt = z  # Assuming z is relative to the starting altitude
+
+        tmp_x, tmp_y = transformer_wgs84_to_utm.transform(lon, lat)
+        self.get_logger().info(f"After UTM x={utm_x}, y={utm_y}")
+
 
         gps_msg = NavSatFix()
         # gps_msg.header.frame_id = "map"
