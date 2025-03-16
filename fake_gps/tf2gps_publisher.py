@@ -75,9 +75,13 @@ class TfToGpsPublisher(Node):
         
         self.get_logger().debug(f"Displacement in map frame: x={t.transform.translation.x}, y={t.transform.translation.y}, z={t.transform.translation.z}")
         
-        noise = 0.1
+        noise = 0.01
+        # uniform distribution noise
+        # gps_msg = self.convert_to_gps(t.transform.translation.x+random.uniform(-noise,noise), t.transform.translation.y+random.uniform(-noise,noise), z=0.0)
 
-        gps_msg = self.convert_to_gps(t.transform.translation.x+random.uniform(-noise,noise), t.transform.translation.y+random.uniform(-noise,noise), z=0.0)
+        # normal distribution noise
+        gps_msg = self.convert_to_gps(t.transform.translation.x+random.gauss(0,noise), t.transform.translation.y+random.gauss(0,noise), z=0.0)
+
 
         if gps_msg: 
             gps_msg.header.stamp = self.get_clock().now().to_msg()
